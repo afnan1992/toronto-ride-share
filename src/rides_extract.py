@@ -12,6 +12,7 @@ from pathlib import Path
 import pyarrow.csv as pv
 import pyarrow.parquet as pq
 import re 
+from utils.upload import move_files_to_google_cloud_storage
 
 
 con =configparser.ConfigParser()
@@ -64,6 +65,7 @@ def unpack_zip(zip_file_names:list):
             with zipfile.ZipFile(file,"r") as zip_ref:
                 zip_ref.extractall(con['DEFAULT']['output'])
     
+    logging.info("unpacking zips done")
     
 def change_structure() -> None:
     
@@ -92,6 +94,8 @@ def convert_to_parquet():
         except BaseException as e:
             print(str(e))
             # fix_file(file,str(e))
+    
+    logging.info("convert to parquet done")
 
 # def fix_file(file:str,exception:str)->None:
 #     x = re.findall("^[0-9]{7,11}$", exception)
@@ -110,4 +114,6 @@ def main():
     convert_to_parquet()
 
 main()
+print("moving ride files to gcs")
+move_files_to_google_cloud_storage("../code/data/extract/",'rides','.parquet')
 
