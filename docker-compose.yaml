@@ -300,8 +300,9 @@ services:
     build:
       context: ./
       dockerfile: ./containers/extract/Dockerfile
-    volumes:
-      - ./:/code
+    # volumes:
+    #    - ./src:/code
+    #    - ./keys:/code/keys/
   
   
   

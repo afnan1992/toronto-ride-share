@@ -1,3 +1,5 @@
 requests
 pyarrow
 bs4
+wget
+google-cloud-storage
