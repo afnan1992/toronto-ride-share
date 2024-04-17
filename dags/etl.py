@@ -12,7 +12,7 @@ from airflow.operators.bash import BashOperator
 
 from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesystemToGCSOperator
 
-from airflow.providers.google.cloud.operators.dataproc import DataprocSubmitJobOperator
+from airflow.providers.google.cloud.operators.dataproc import DataprocSubmitJobOperator, DataprocDeleteClusterOperator
 
 
 PYSPARK_JOB = {
@@ -20,6 +20,11 @@ PYSPARK_JOB = {
     "placement": {"cluster_name": 'cluster-data-proc-afnan'},
     "pyspark_job": {"main_python_file_uri": 'gs://toronto-ride-share-files/code/transform.py'},
 }
+
+PROJECT_ID='toronto-ride-share-pipeline'
+CLUSTER_NAME='cluster-data-proc-afnan'
+REGION='northamerica-northeast2'
+BUCKET = 'toronto-ride-share-files'
 
 dag = DAG(
     'toronto_ride_share_etl',
@@ -56,9 +61,9 @@ ExtractWeather = DockerOperator (
 upload_to_gcs = LocalFilesystemToGCSOperator(
     task_id='upload_to_gcs',
     dag=dag,
-    src='/opt/airflow/dags/transform.py',
+    src='/opt/airflow/src/transform.py',
     dst='code/transform.py',
-    bucket = 'toronto-ride-share-files'
+    bucket = BUCKET
 )
 
 
@@ -66,12 +71,10 @@ upload_to_gcs = LocalFilesystemToGCSOperator(
 pyspark_task = DataprocSubmitJobOperator(
     task_id="pyspark_task", 
     job=PYSPARK_JOB, 
-    region='northamerica-northeast2',
-    project_id='toronto-ride-share-pipeline',
+    region=REGION,
+    project_id=PROJECT_ID,
     gcp_conn_id = 'gcp_data_proc'
 )
-
-
 
 
 

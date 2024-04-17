@@ -43,7 +43,7 @@ resource "google_bigquery_dataset" "toronto_ride_share_dataset" {
 
 
 # resource "google_dataproc_cluster" "my_cluster" {
-#   name          = "cluster-data-proc"
+#   name          = "cluster-data-proc-afnan"
 #   region        = "northamerica-northeast2"
   
 
