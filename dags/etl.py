@@ -32,26 +32,26 @@ dag = DAG(
     
 ) 
 
-# ExtractRides = DockerOperator (
-#         dag = dag,
-#         task_id="extract_ride_share",
-#         image='extract',
-#         command='python rides_extract.py',
-#         docker_url='tcp://docker-proxy:2375',
+ExtractRides = DockerOperator (
+        dag = dag,
+        task_id="extract_ride_share",
+        image='extract',
+        command='python rides_extract.py',
+        docker_url='tcp://docker-proxy:2375',
        
         
-#     )
+    )
 
-# ExtractWeather = DockerOperator (
-#         dag = dag,
-#         task_id="extract_weather",
-#         #image='afnan1992/toronto-ride-share:latest',
-#         image = 'extract',
-#         command='python weather_extract.py',
-#         docker_url='tcp://docker-proxy:2375',
+ExtractWeather = DockerOperator (
+        dag = dag,
+        task_id="extract_weather",
+        #image='afnan1992/toronto-ride-share:latest',
+        image = 'extract',
+        command='python weather_extract.py',
+        docker_url='tcp://docker-proxy:2375',
        
         
-#     )
+    )
 
 upload_to_gcs = LocalFilesystemToGCSOperator(
     task_id='upload_to_gcs',
@@ -71,27 +71,17 @@ pyspark_task = DataprocSubmitJobOperator(
     gcp_conn_id = 'gcp_data_proc'
 )
 
-# move_to_gcs = DockerOperator(
-#         dag = dag,
-#         task_id="move_to_gcs",
-#         #image='afnan1992/toronto-ride-share:latest',
-#         image = 'extract',
-#         command='python utils/upload.py',
-#         docker_url='tcp://docker-proxy:2375',
-
-#     )
-
- 
-
-# move_to_gcs = BashOperator(
-#     dag = dag,
-#     task_id="move_to_gcs",
-#     bash_command="docker exec extract python utils/upload.py",
-    
-
-# )
 
 
-# [ExtractRides,ExtractWeather]
-upload_to_gcs >> pyspark_task
+
+
+delete_cluster = DataprocDeleteClusterOperator(
+    task_id="delete_cluster",
+    project_id=PROJECT_ID,
+    cluster_name=CLUSTER_NAME,
+    region=REGION,
+)
+
+
+[ExtractRides,ExtractWeather] >> upload_to_gcs >> pyspark_task >> delete_cluster
 
