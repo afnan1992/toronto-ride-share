@@ -66,6 +66,14 @@ upload_to_gcs = LocalFilesystemToGCSOperator(
     bucket = BUCKET
 )
 
+create_cluster = DockerOperator (
+        task_id="create_cluster",
+        image='gcloud',
+        command='gcloud dataproc clusters create afnan-data-proc-cluster --region=northamerica-northeast2 --project=toronto-ride-share-pipeline --single-node',
+        docker_url='tcp://docker-proxy:2375',
+       
+        
+    )
 
 # Submit Spark job on Dataproc
 pyspark_task = DataprocSubmitJobOperator(
@@ -86,5 +94,5 @@ delete_cluster = DataprocDeleteClusterOperator(
 )
 
 
-[ExtractRides,ExtractWeather] >> upload_to_gcs >> pyspark_task >> delete_cluster
+[ExtractRides,ExtractWeather] >> upload_to_gcs >> create_cluster >> pyspark_task >> delete_cluster
 

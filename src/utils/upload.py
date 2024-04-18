@@ -54,7 +54,7 @@ def move_files_to_google_cloud_storage(directory,gcspath,extension):
         filename = files[index]
         m = re.search(r"\b\d{4}\b", filename)
     
-        if filename.endswith(extension) and m and int(m.group()) >= 2020:
+        if filename.endswith(extension) and m and int(m.group()) >= 2024:
 
             #create_newfolder("toronto-ride-share-files",str(m.group())+"/")
             if extension == '.parquet':

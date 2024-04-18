@@ -305,6 +305,15 @@ services:
     #    - ./src:/code
     #    - ./keys:/code/keys/
   
+  gcloud:
+    image: gcloud
+    container_name: gcloud
+    build:
+      context: ./
+      dockerfile: ./containers/gcloud/Dockerfile
+    # volumes:
+    #   - ~/.config/gcloud:/root/.config/gcloud
+  
   
   
 
