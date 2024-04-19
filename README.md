@@ -4,7 +4,7 @@ A fully automated datapipeline running in docker containers that utilizes GCP Da
 
 
 
-# pre requisites 
+# Pre requisites 
     Have docker and docker compose installed
     Have a google cloud account
     
